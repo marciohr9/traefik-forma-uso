@@ -1,0 +1,51 @@
+version: "3.7"
+
+networks:
+  traefik:
+    external:
+      true
+
+services:
+  traefik:
+    networks:
+      - traefik
+    image: traefik:latest
+    restart: unless-stopped
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=traefik
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.metrics.address=:8080
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.web.http.redirections.entrypoint.permanent=true
+      - --api=true
+      - --api.dashboard=true
+      - --log.level=DEBUG
+      - --metrics.prometheus.addentrypointslabels=true
+      - --metrics.prometheus.addrouterslabels=true
+      - --metrics.prometheus.addserviceslabels=true
+      - --metrics.prometheus.entrypoint=metrics
+      - --certificatesresolvers.letsencrypt.acme.email=${USER_EMAIL}
+      - --certificatesresolvers.letsencrypt.acme.storage='/certificates/acme.json'
+      - --certificatesresolvers.letsencrypt.acme.caserver='https://acme-v02.api.letsencrypt.org/directory'
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "${PWD}/traefik-public-certificates:/certificates"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`${DASHBOARD_URL}`)"
+      - "traefik.http.routers.dashboard.tls=true"
+      - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.dashboard.service=api@internal"
+
+
+
+    

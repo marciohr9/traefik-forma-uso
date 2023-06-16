@@ -1,0 +1,18 @@
+version: '3.7'
+
+networks:
+  hello-world:
+  traefik:
+    external: true
+
+services:
+  hello-world:
+    image: hello-world
+    networks:
+      - hello-world
+      - traefik
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.helloworld.rule: "Host(`helloworld.com.br`)"
+      traefik.http.routers.helloworld.tls: "true"
+      traefik.http.routers.helloworld.tls.certresolver: "letsencrypt"
