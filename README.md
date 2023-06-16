@@ -14,10 +14,10 @@ Em adicional as portas 80 e 443 a porta **8080** também está reservada para ex
 
 O uso do dashboard é totalmente opcional, caso n queira fazer uso do mesmo basta mudar para **false** na parte de comandos de inicialização de contêiner  `--api` e **comentar** todas estas linhas no Label do serviço do traefik no docker-compose:
 
-> "traefik.http.routers.dashboard.rule=Host(`${DASHBOARD_URL}`)"
-> "traefik.http.routers.dashboard.tls=true"
-> "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
-> "traefik.http.routers.dashboard.service=api@internal"
+> --"traefik.http.routers.dashboard.rule=Host(`${DASHBOARD_URL}`)"<br>
+> --"traefik.http.routers.dashboard.tls=true"<br>
+> --"traefik.http.routers.dashboard.tls.certresolver=letsencrypt"<br>
+> --"traefik.http.routers.dashboard.service=api@internal"<br>
 
 ## Fazendo uso do traefik para proxy e certificação
 
